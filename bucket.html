@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Mon Panier</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: white; margin: 20px; }
+    h1 { color: #0066cc; }
+    ul { list-style: none; padding: 0; }
+    li { margin-bottom: 10px; }
+    .total { font-weight: bold; margin-top: 20px; font-size: 18px; }
+    button { margin-top: 10px; padding: 10px 20px; background: #009879; color: white; border: none; border-radius: 5px; cursor: pointer; }
+    button:hover { background: #00775f; }
+  </style>
+</head>
+<body>
+  <h1>🛒 Mon Panier</h1>
+  <ul id="bucketList"></ul>
+  <div class="total" id="total"></div>
+  <form action="https://formspree.io/f/xzzakbqg" method="POST">
+    <input type="hidden" name="message" id="message">
+    <button type="submit">Envoyer ma commande</button>
+  </form>
+
+  <script>
+    function getBucket() {
+      return JSON.parse(localStorage.getItem("bucket")) || [];
+    }
+
+    function parsePrice(priceStr) {
+      // Keep only digits (and possibly decimals), ignore CFA text
+      const num = priceStr.toString().replace(/[^\d.]/g, "");
+      return parseFloat(num) || 0;
+    }
+
+    function renderBucket() {
+      const bucket = getBucket();
+      const list = document.getElementById("bucketList");
+      const totalDiv = document.getElementById("total");
+      const hiddenMessage = document.getElementById("message");
+
+      list.innerHTML = "";
+      let total = 0;
+      let orderDetails = "";
+
+      if (bucket.length === 0) {
+        list.innerHTML = "<p>Votre panier est vide.</p>";
+        totalDiv.textContent = "";
+        hiddenMessage.value = "Panier vide";
+        return;
+      }
+
+      bucket.forEach(item => {
+        const li = document.createElement("li");
+
+        const unitPrice = parsePrice(item.price);
+        const subtotal = unitPrice * (item.quantity || 1);
+
+        li.textContent = `${item.label} x${item.quantity || 1} — ${subtotal} CFA`;
+
+        list.appendChild(li);
+        total += subtotal;
+        orderDetails += `${item.label} x${item.quantity || 1} — ${subtotal} CFA\n`;
+      });
+
+      totalDiv.textContent = "Total : " + total + " CFA";
+      hiddenMessage.value = orderDetails + "\nTotal : " + total + " CFA";
+    }
+
+    renderBucket();
+  </script>
+</body>
+</html>

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Détails de l'article</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 30px; }
+    h1 { color: #0066cc; }
+    p { font-size: 16px; color: #333; }
+  </style>
+</head>
+<body>
+  <h1 id="label"></h1>
+  <p><strong>Prix :</strong> <span id="price"></span></p>
+  <p><strong>Catégorie :</strong> <span id="category"></span></p>
+  <p><strong>Description :</strong></p>
+  <p id="description"></p>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    document.getElementById("label").textContent = params.get("label");
+    document.getElementById("price").textContent = params.get("price");
+    document.getElementById("category").textContent = params.get("category");
+    document.getElementById("description").textContent = params.get("description");
+  </script>
+</body>
+</html>

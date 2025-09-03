@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Articles Senepharma</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: white; margin: 20px; }
+    .search-container { display: flex; flex-direction: column; align-items: center; margin: 20px auto; width: 70%; }
+    .search-container img { width: 400px; height: 150px; object-fit: cover; margin-bottom: 20px; }
+    #searchBar { width: 100%; padding: 12px; font-size: 16px; border: 1px solid #ccc; border-radius: 5px; }
+    .item { border-bottom: 1px solid #eee; padding: 10px 0; }
+    .label { font-weight: bold; color: #0066cc; display: block; margin-bottom: 5px; cursor: pointer; }
+    .price { color: #009879; display: block; margin-bottom: 5px; }
+    .cart-container { display: flex; align-items: center; gap: 8px; margin-top: 5px; }
+    .cart-btn { background: none; border: none; cursor: pointer; font-size: 20px; display: inline-block; }
+    .cart-btn.added { color: #1fab1c; }
+    .cart-hint { font-size: 12px; color: #555; }
+    .bucket-link { position: absolute; top: 20px; right: 20px; }
+    .bucket-link a { font-size: 18px; color: #0066cc; text-decoration: none; }
+  </style>
+</head>
+<body>
+  <div class="search-container">
+    <img src="https://allarassemjonathan.github.io/cleaned_senepharma_logo.jpg" alt="Logo Senepharma">
+    <input type="text" id="searchBar" placeholder="Rechercher un article...">
+  </div>
+  
+  <div id="articles"></div>
+
+  <div class="bucket-link">
+    <a href="bucket.html">🛒 Voir mon panier</a>
+  </div>
+
+  <script>
+    const container = document.getElementById("articles");
+    const searchBar = document.getElementById("searchBar");
+
+    function getBucket() {
+      return JSON.parse(localStorage.getItem("bucket")) || [];
+    }
+
+    function saveBucket(bucket) {
+      localStorage.setItem("bucket", JSON.stringify(bucket));
+    }
+
+    function addToBucket(item) {
+      let bucket = getBucket();
+      const existing = bucket.find(i => i.label === item.label);
+      if (existing) {
+        existing.quantity += 1;
+      } else {
+        bucket.push({...item, quantity: 1});
+      }
+      saveBucket(bucket);
+      return getBucket().find(i => i.label === item.label).quantity;
+    }
+
+    function removeFromBucket(item) {
+      let bucket = getBucket();
+      const existing = bucket.find(i => i.label === item.label);
+      if (existing) {
+        existing.quantity -= 1;
+        if (existing.quantity <= 0) {
+          bucket = bucket.filter(i => i.label !== item.label);
+          saveBucket(bucket);
+          return 0;
+        }
+      }
+      saveBucket(bucket);
+      return existing ? existing.quantity : 0;
+    }
+
+    async function loadArticles() {
+      const response = await fetch("https://allarassemjonathan.github.io/articles_senepharma.json");
+      const data = await response.json();
+
+      function displayArticles(filter = "") {
+        container.innerHTML = "";
+        const entries = Object.entries(data)
+          .filter(([key]) => key.toLowerCase().includes(filter.toLowerCase()));
+        
+        if (entries.length === 0) {
+          container.innerHTML = "<p>Aucun article trouvé.</p>";
+          return;
+        }
+
+        const bucket = getBucket();
+
+        entries.forEach(([label, info]) => {
+          const div = document.createElement("div");
+          div.className = "item";
+
+          const inBucket = bucket.find(i => i.label === label);
+
+          // Label (opens new tab with details)
+          const labelSpan = document.createElement("span");
+          labelSpan.className = "label";
+          labelSpan.textContent = label;
+          labelSpan.addEventListener("click", () => {
+            const detailsWindow = window.open("", "_blank");
+            detailsWindow.document.write(`
+              <h1>${label}</h1>
+              <p><strong>Prix:</strong> ${info.price}</p>
+              <p><strong>Catégorie:</strong> ${info.category || "Non spécifiée"}</p>
+              <p><strong>Description:</strong> ${info.description || "Pas de description disponible."}</p>
+            `);
+          });
+
+          const priceSpan = document.createElement("span");
+          priceSpan.className = "price";
+          priceSpan.textContent = info.price;
+
+          // Cart controls
+          const cartContainer = document.createElement("div");
+          cartContainer.className = "cart-container";
+
+          const btn = document.createElement("button");
+          btn.className = "cart-btn " + (inBucket ? "added" : "");
+          btn.textContent = inBucket ? `🛒 x${inBucket.quantity}` : "🛒";
+
+          // Left click = remove
+          btn.addEventListener("click", () => {
+            const qty = removeFromBucket({label, price: info.price});
+            if (qty > 0) {
+              btn.textContent = `🛒 x${qty}`;
+              btn.classList.add("added");
+            } else {
+              btn.textContent = "🛒";
+              btn.classList.remove("added");
+            }
+          });
+
+          // Right click = add
+          btn.addEventListener("contextmenu", (e) => {
+            e.preventDefault();
+            const qty = addToBucket({label, price: info.price});
+            btn.textContent = `🛒 x${qty}`;
+            btn.classList.add("added");
+          });
+
+          const hint = document.createElement("span");
+          hint.className = "cart-hint";
+          hint.textContent = "(clic droit pour ajouter, clic gauche pour retirer)";
+
+          cartContainer.appendChild(btn);
+          cartContainer.appendChild(hint);
+
+          div.appendChild(labelSpan);
+          div.appendChild(priceSpan);
+          div.appendChild(cartContainer);
+
+          container.appendChild(div);
+        });
+      }
+
+      displayArticles();
+
+      searchBar.addEventListener("input", (e) => {
+        displayArticles(e.target.value);
+      });
+    }
+
+    loadArticles();
+  </script>
+</body>
+</html>
