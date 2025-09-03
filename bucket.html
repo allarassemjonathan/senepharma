@@ -2,24 +2,176 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mon Panier</title>
   <style>
-    body { font-family: Arial, sans-serif; background: white; margin: 20px; }
-    h1 { color: #0066cc; }
-    ul { list-style: none; padding: 0; }
-    li { margin-bottom: 10px; }
-    .total { font-weight: bold; margin-top: 20px; font-size: 18px; }
-    button { margin-top: 10px; padding: 10px 20px; background: #009879; color: white; border: none; border-radius: 5px; cursor: pointer; }
-    button:hover { background: #00775f; }
+    body {
+      font-family: Arial, sans-serif;
+      margin: 10px;
+      background: #f9f9f9;
+      color: #333;
+    }
+
+    h1 {
+      color: #0066cc;
+      text-align: center;
+      margin-bottom: 15px;
+    }
+
+    .top-buttons {
+      display: flex;
+      justify-content: space-between;
+      max-width: 600px;
+      margin: 0 auto 15px auto;
+      gap: 10px;
+    }
+
+    .top-buttons a {
+      padding: 8px 12px;
+      text-decoration: none;
+      background: #0066cc;
+      color: white;
+      border-radius: 6px;
+      font-size: 14px;
+      text-align: center;
+    }
+
+    .top-buttons a:hover {
+      background: #004d99;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    li {
+      background: white;
+      padding: 12px 15px;
+      margin-bottom: 10px;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      font-size: 16px;
+    }
+
+    .item-info {
+      flex: 1 1 60%;
+      min-width: 150px;
+    }
+
+    .item-controls {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex: 1 1 40%;
+      justify-content: flex-end;
+      min-width: 120px;
+    }
+
+    .item-controls button {
+      padding: 5px 8px;
+      font-size: 14px;
+      border-radius: 6px;
+      border: none;
+      background: #009879;
+      color: white;
+      cursor: pointer;
+    }
+
+    .item-controls button:hover {
+      background: #00775f;
+    }
+
+    .quantity {
+      min-width: 24px;
+      text-align: center;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    .total {
+      font-weight: bold;
+      margin: 20px auto;
+      max-width: 600px;
+      text-align: right;
+      font-size: 18px;
+    }
+
+    form {
+      max-width: 600px;
+      margin: 20px auto;
+      text-align: center;
+    }
+
+    button.submit-btn {
+      width: 100%;
+      max-width: 250px;
+      padding: 10px 15px;
+      font-size: 16px;
+      border-radius: 8px;
+      border: none;
+      background: #009879;
+      color: white;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    button.submit-btn:hover {
+      background: #00775f;
+    }
+
+    @media (max-width: 480px) {
+      li {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .item-controls {
+        width: 100%;
+        justify-content: flex-start;
+        margin-top: 8px;
+      }
+
+      .item-controls button {
+        font-size: 12px;
+        padding: 4px 6px;
+      }
+
+      .quantity {
+        font-size: 12px;
+      }
+
+      .total {
+        text-align: left;
+        font-size: 16px;
+      }
+
+      button.submit-btn {
+        font-size: 14px;
+        padding: 8px 12px;
+      }
+    }
   </style>
 </head>
 <body>
+
+  <div class="top-buttons">
+    <a href="index.html">🏠 Retour à la page principale</a>
+  </div>
+
   <h1>🛒 Mon Panier</h1>
   <ul id="bucketList"></ul>
   <div class="total" id="total"></div>
+
   <form action="https://formspree.io/f/xzzakbqg" method="POST">
     <input type="hidden" name="message" id="message">
-    <button type="submit">Envoyer ma commande</button>
+    <button type="submit" class="submit-btn">Envoyer ma commande</button>
   </form>
 
   <script>
@@ -27,10 +179,12 @@
       return JSON.parse(localStorage.getItem("bucket")) || [];
     }
 
+    function saveBucket(bucket) {
+      localStorage.setItem("bucket", JSON.stringify(bucket));
+    }
+
     function parsePrice(priceStr) {
-      // Keep only digits (and possibly decimals), ignore CFA text
-      const num = priceStr.toString().replace(/[^\d.]/g, "");
-      return parseFloat(num) || 0;
+      return parseFloat(priceStr.toString().replace(/[^\d.]/g, "")) || 0;
     }
 
     function renderBucket() {
@@ -56,11 +210,48 @@
         const unitPrice = parsePrice(item.price);
         const subtotal = unitPrice * (item.quantity || 1);
 
-        li.textContent = `${item.label} x${item.quantity || 1} — ${subtotal} CFA`;
+        li.innerHTML = `
+          <div class="item-info">${item.label} — ${unitPrice} CFA</div>
+          <div class="item-controls">
+            <button class="remove-btn">➖</button>
+            <span class="quantity">${item.quantity}</span>
+            <button class="add-btn">➕</button>
+            <span>${subtotal} CFA</span>
+          </div>
+        `;
 
         list.appendChild(li);
+
+        const addBtn = li.querySelector(".add-btn");
+        const removeBtn = li.querySelector(".remove-btn");
+        const quantitySpan = li.querySelector(".quantity");
+
+        addBtn.addEventListener("click", () => {
+          const bucket = getBucket();
+          const index = bucket.findIndex(i => i.label === item.label);
+          if (index !== -1) {
+            bucket[index].quantity += 1;
+            quantitySpan.textContent = bucket[index].quantity;
+          }
+          saveBucket(bucket);
+          renderBucket();
+        });
+
+        removeBtn.addEventListener("click", () => {
+          const bucket = getBucket();
+          const index = bucket.findIndex(i => i.label === item.label);
+          if (index !== -1) {
+            bucket[index].quantity -= 1;
+            if (bucket[index].quantity <= 0) {
+              bucket.splice(index, 1);
+            }
+          }
+          saveBucket(bucket);
+          renderBucket();
+        });
+
         total += subtotal;
-        orderDetails += `${item.label} x${item.quantity || 1} — ${subtotal} CFA\n`;
+        orderDetails += `${item.label} x${item.quantity} — ${subtotal} CFA\n`;
       });
 
       totalDiv.textContent = "Total : " + total + " CFA";

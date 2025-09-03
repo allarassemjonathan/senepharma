@@ -2,34 +2,131 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Articles Senepharma</title>
   <style>
-    body { font-family: Arial, sans-serif; background: white; margin: 20px; }
-    .search-container { display: flex; flex-direction: column; align-items: center; margin: 20px auto; width: 70%; }
-    .search-container img { width: 400px; height: 150px; object-fit: cover; margin-bottom: 20px; }
-    #searchBar { width: 100%; padding: 12px; font-size: 16px; border: 1px solid #ccc; border-radius: 5px; }
-    .item { border-bottom: 1px solid #eee; padding: 10px 0; }
-    .label { font-weight: bold; color: #0066cc; display: block; margin-bottom: 5px; cursor: pointer; }
-    .price { color: #009879; display: block; margin-bottom: 5px; }
-    .cart-container { display: flex; align-items: center; gap: 8px; margin-top: 5px; }
-    .cart-btn { background: none; border: none; cursor: pointer; font-size: 20px; display: inline-block; }
-    .cart-btn.added { color: #1fab1c; }
-    .cart-hint { font-size: 12px; color: #555; }
-    .bucket-link { position: absolute; top: 20px; right: 20px; }
-    .bucket-link a { font-size: 18px; color: #0066cc; text-decoration: none; }
+    body {
+      font-family: Arial, sans-serif;
+      background: #f9f9f9;
+      margin: 0;
+      padding: 10px;
+    }
+
+    .search-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 20px auto;
+      width: 90%;
+      max-width: 600px;
+    }
+
+    .search-container img {
+      width: 80%;
+      max-width: 400px;
+      height: auto;
+      object-fit: cover;
+      margin-bottom: 15px;
+    }
+
+    #searchBar {
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+
+    .item {
+      background: white;
+      margin: 8px 0;
+      padding: 12px;
+      border-radius: 8px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+      cursor: pointer;
+    }
+
+    .label {
+      font-weight: bold;
+      color: #0066cc;
+      font-size: 16px;
+      margin-bottom: 5px;
+      display: block;
+    }
+
+    .price {
+      color: #009879;
+      margin-bottom: 5px;
+      display: block;
+    }
+
+    .cart-controls {
+      display: none;
+      align-items: center;
+      gap: 5px;
+      margin-top: 5px;
+    }
+
+    .cart-controls button {
+      padding: 4px 8px;
+      font-size: 14px;
+      border-radius: 6px;
+      border: none;
+      background: #009879;
+      color: white;
+      cursor: pointer;
+      flex: none;
+    }
+
+    .cart-controls button:hover {
+      background: #00775f;
+    }
+
+    .quantity {
+      min-width: 24px;
+      text-align: center;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    .bucket-link {
+      position: fixed;
+      top: 15px;
+      right: 15px;
+      z-index: 100;
+      background: #0066cc;
+      color: white;
+      padding: 8px 12px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-size: 16px;
+    }
+
+    .bucket-link:hover {
+      background: #004d99;
+    }
+
+    @media (max-width: 480px) {
+      .cart-controls button {
+        padding: 3px 6px;
+        font-size: 12px;
+      }
+      .quantity {
+        font-size: 12px;
+      }
+    }
   </style>
 </head>
 <body>
+
+  <a href="./bucket.html" class="bucket-link">🛒 Voir mon panier</a>
+
   <div class="search-container">
     <img src="https://allarassemjonathan.github.io/cleaned_senepharma_logo.jpg" alt="Logo Senepharma">
     <input type="text" id="searchBar" placeholder="Rechercher un article...">
   </div>
   
   <div id="articles"></div>
-
-  <div class="bucket-link">
-    <a href="./bucket.html">🛒 Voir mon panier</a>
-  </div>
 
   <script>
     const container = document.getElementById("articles");
@@ -41,33 +138,6 @@
 
     function saveBucket(bucket) {
       localStorage.setItem("bucket", JSON.stringify(bucket));
-    }
-
-    function addToBucket(item) {
-      let bucket = getBucket();
-      const existing = bucket.find(i => i.label === item.label);
-      if (existing) {
-        existing.quantity += 1;
-      } else {
-        bucket.push({...item, quantity: 1});
-      }
-      saveBucket(bucket);
-      return getBucket().find(i => i.label === item.label).quantity;
-    }
-
-    function removeFromBucket(item) {
-      let bucket = getBucket();
-      const existing = bucket.find(i => i.label === item.label);
-      if (existing) {
-        existing.quantity -= 1;
-        if (existing.quantity <= 0) {
-          bucket = bucket.filter(i => i.label !== item.label);
-          saveBucket(bucket);
-          return 0;
-        }
-      }
-      saveBucket(bucket);
-      return existing ? existing.quantity : 0;
     }
 
     async function loadArticles() {
@@ -90,66 +160,57 @@
           const div = document.createElement("div");
           div.className = "item";
 
-          const inBucket = bucket.find(i => i.label === label);
+          const existingItem = bucket.find(i => i.label === label);
+          const quantity = existingItem ? existingItem.quantity : 0;
 
-          // Label (opens new tab with details)
-          const labelSpan = document.createElement("span");
-          labelSpan.className = "label";
-          labelSpan.textContent = label;
-          labelSpan.addEventListener("click", () => {
-            const detailsWindow = window.open("", "_blank");
-            detailsWindow.document.write(`
-              <h1>${label}</h1>
-              <p><strong>Prix:</strong> ${info.price}</p>
-              <p><strong>Catégorie:</strong> ${info.category || "Non spécifiée"}</p>
-              <p><strong>Description:</strong> ${info.description || "Pas de description disponible."}</p>
-            `);
-          });
-
-          const priceSpan = document.createElement("span");
-          priceSpan.className = "price";
-          priceSpan.textContent = info.price;
-
-          // Cart controls
-          const cartContainer = document.createElement("div");
-          cartContainer.className = "cart-container";
-
-          const btn = document.createElement("button");
-          btn.className = "cart-btn " + (inBucket ? "added" : "");
-          btn.textContent = inBucket ? `🛒 x${inBucket.quantity}` : "🛒";
-
-          // Left click = remove
-          btn.addEventListener("click", () => {
-            const qty = removeFromBucket({label, price: info.price});
-            if (qty > 0) {
-              btn.textContent = `🛒 x${qty}`;
-              btn.classList.add("added");
-            } else {
-              btn.textContent = "🛒";
-              btn.classList.remove("added");
-            }
-          });
-
-          // Right click = add
-          btn.addEventListener("contextmenu", (e) => {
-            e.preventDefault();
-            const qty = addToBucket({label, price: info.price});
-            btn.textContent = `🛒 x${qty}`;
-            btn.classList.add("added");
-          });
-
-          const hint = document.createElement("span");
-          hint.className = "cart-hint";
-          hint.textContent = "(clic droit pour ajouter, clic gauche pour retirer)";
-
-          cartContainer.appendChild(btn);
-          cartContainer.appendChild(hint);
-
-          div.appendChild(labelSpan);
-          div.appendChild(priceSpan);
-          div.appendChild(cartContainer);
+          div.innerHTML = `
+            <span class="label">${label}</span>
+            <span class="price">${info.price}</span>
+            <div class="cart-controls">
+              <button class="add-btn">➕</button>
+              <span class="quantity">${quantity}</span>
+              <button class="remove-btn">➖</button>
+            </div>
+          `;
 
           container.appendChild(div);
+
+          const cartControls = div.querySelector(".cart-controls");
+          const addBtn = div.querySelector(".add-btn");
+          const removeBtn = div.querySelector(".remove-btn");
+          const quantitySpan = div.querySelector(".quantity");
+
+          // show controls only after first click on item
+          div.addEventListener("click", () => {
+            cartControls.style.display = "flex";
+          }, { once: true });
+
+          addBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            let bucket = getBucket();
+            const index = bucket.findIndex(i => i.label === label);
+            if (index === -1) {
+              bucket.push({ label, price: info.price, quantity: 1 });
+            } else {
+              bucket[index].quantity += 1;
+            }
+            const updatedItem = bucket.find(i => i.label === label);
+            quantitySpan.textContent = updatedItem.quantity;
+            saveBucket(bucket);
+          });
+
+          removeBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            let bucket = getBucket();
+            const index = bucket.findIndex(i => i.label === label);
+            if (index !== -1) {
+              bucket[index].quantity -= 1;
+              if (bucket[index].quantity <= 0) bucket.splice(index, 1);
+            }
+            const updatedItem = bucket.find(i => i.label === label);
+            quantitySpan.textContent = updatedItem ? updatedItem.quantity : 0;
+            saveBucket(bucket);
+          });
         });
       }
 

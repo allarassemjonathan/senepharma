@@ -2,26 +2,114 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Détails de l'article</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 30px; }
-    h1 { color: #0066cc; }
-    p { font-size: 16px; color: #333; }
+    body {
+      font-family: Arial, sans-serif;
+      margin: 10px;
+      background: #f9f9f9;
+      color: #333;
+    }
+
+    header {
+      background: #0066cc;
+      color: white;
+      padding: 20px;
+      text-align: center;
+      border-radius: 0 0 12px 12px;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 24px;
+      word-break: break-word;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 20px auto;
+      padding: 20px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    .info p {
+      font-size: 16px;
+      margin: 8px 0;
+    }
+
+    .info strong {
+      color: #0066cc;
+    }
+
+    .description {
+      padding: 15px;
+      background: #f1f8ff;
+      border-left: 4px solid #0066cc;
+      border-radius: 6px;
+      line-height: 1.5;
+      margin-bottom: 20px;
+    }
+
+    .back-btn {
+      display: inline-block;
+      padding: 12px 20px;
+      background: #009879;
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      font-size: 16px;
+      text-align: center;
+      width: 100%;
+      max-width: 300px;
+      transition: background 0.3s;
+    }
+
+    .back-btn:hover {
+      background: #00775f;
+    }
+
+    @media (max-width: 480px) {
+      header h1 {
+        font-size: 20px;
+      }
+
+      .container {
+        padding: 15px;
+      }
+
+      .back-btn {
+        font-size: 14px;
+        padding: 10px 16px;
+      }
+    }
   </style>
 </head>
 <body>
-  <h1 id="label"></h1>
-  <p><strong>Prix :</strong> <span id="price"></span></p>
-  <p><strong>Catégorie :</strong> <span id="category"></span></p>
-  <p><strong>Description :</strong></p>
-  <p id="description"></p>
+  <header>
+    <h1 id="label">Chargement...</h1>
+  </header>
+
+  <div class="container">
+    <div class="info">
+      <p><strong>Prix :</strong> <span id="price"></span></p>
+      <p><strong>Catégorie :</strong> <span id="category"></span></p>
+    </div>
+
+    <h3>Description :</h3>
+    <p class="description" id="description"></p>
+
+    <a href="index.html" class="back-btn">← Retour aux articles</a>
+  </div>
 
   <script>
     const params = new URLSearchParams(window.location.search);
-    document.getElementById("label").textContent = params.get("label");
-    document.getElementById("price").textContent = params.get("price");
-    document.getElementById("category").textContent = params.get("category");
-    document.getElementById("description").textContent = params.get("description");
+    document.getElementById("label").textContent = params.get("label") || "Nom de l'article";
+    document.getElementById("price").textContent = params.get("price") || "Prix non disponible";
+    document.getElementById("category").textContent = params.get("category") || "Non spécifiée";
+    document.getElementById("description").textContent = params.get("description") || "Pas de description disponible.";
   </script>
 </body>
 </html>
