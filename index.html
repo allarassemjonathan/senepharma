@@ -4,53 +4,41 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Articles Senepharma</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #f9f9f9;
+      background: #ecf0f1;
       margin: 0;
       padding: 10px;
     }
 
-    .search-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      margin: 20px auto;
-      width: 90%;
-      max-width: 600px;
-    }
-
-    .search-container img {
-      width: 80%;
-      max-width: 400px;
-      height: auto;
-      object-fit: cover;
-      margin-bottom: 15px;
-    }
-
-    #searchBar {
-      width: 100%;
-      padding: 10px;
-      font-size: 16px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-    }
-
     .item {
       background: white;
-      margin: 8px 0;
+      margin-top: 50px;
+      min-height: 100px;
+      margin: 8px 0px;
       padding: 12px;
       border-radius: 8px;
       box-shadow: 0 1px 4px rgba(0,0,0,0.1);
       cursor: pointer;
     }
 
+    .article-img{
+      width: 120px;   /* ajuste selon ton design */
+      height: auto;
+      display: block;
+      margin: 0 auto 10px;
+      border-radius: 8px;
+    }
+
     .label {
       font-weight: bold;
       color: #0066cc;
       font-size: 16px;
-      margin-bottom: 5px;
+      margin-bottom: 20px;
+      margin-top: 5px;
       display: block;
     }
 
@@ -58,6 +46,8 @@
       color: #009879;
       margin-bottom: 5px;
       display: block;
+      font-weight: bold;
+      font-size: 20px;
     }
 
     .cart-controls {
@@ -89,19 +79,6 @@
       font-size: 14px;
     }
 
-    .bucket-link {
-      position: fixed;
-      top: 15px;
-      right: 15px;
-      z-index: 100;
-      background: #0066cc;
-      color: white;
-      padding: 8px 12px;
-      border-radius: 6px;
-      text-decoration: none;
-      font-size: 16px;
-    }
-
     .bucket-link:hover {
       background: #004d99;
     }
@@ -118,15 +95,29 @@
   </style>
 </head>
 <body>
-
-  <a href="./bucket.html" class="bucket-link">🛒 Voir mon panier</a>
-
-  <div class="search-container">
-    <img src="https://allarassemjonathan.github.io/cleaned_senepharma_logo.jpg" alt="Logo Senepharma">
-    <input type="text" id="searchBar" placeholder="Rechercher un article...">
-  </div>
+  <nav>
+    <div class="nav-gauche">
+      <h2>Senepharma</h2>
+    </div>
+    <div class="nav-centre">
+      <input type="text" id="searchBar" placeholder="Rechercher un article..." >
+    </div>
+    <div class="nav-droite">
+      <a href=contact.html><i class="fa-solid fa-phone"></i> Contacts</a>
+      <a href="./bucket.html" class="bucket-link"><i class="fa-solid fa-cart-shopping"></i> Voir mon panier</a>
+    </div>
+  </nav>
+  <section id="banner">
+    <img src="Bannière de reprise des activités des pharmacies, bleu et blanc, format paysage.png" alt="">
+  </section>
   
-  <div id="articles"></div>
+  <main>
+    <h2>Decouvrez nos articles</h2>
+    <section id="articles-section">
+      <div id="articles"></div>
+    </section>
+  </main>
+
 
   <script>
     const container = document.getElementById("articles");

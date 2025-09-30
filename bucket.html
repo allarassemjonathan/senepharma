@@ -4,12 +4,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mon Panier</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+</head>
   <style>
     body {
       font-family: Arial, sans-serif;
       margin: 10px;
-      background: #f9f9f9;
+      background: #ecf0f1;
       color: #333;
+      padding-top: 20px;
     }
 
     h1 {
@@ -20,6 +23,8 @@
 
     .top-buttons {
       display: flex;
+      position: absolute;
+      left: 50px;
       justify-content: space-between;
       max-width: 600px;
       margin: 0 auto 15px auto;
@@ -126,6 +131,15 @@
       background: #00775f;
     }
 
+    p{
+      text-align: center;
+    }
+
+    #mon_panier{
+      margin-bottom: 20px;
+    }
+
+
     @media (max-width: 480px) {
       li {
         flex-direction: column;
@@ -162,17 +176,22 @@
 <body>
 
   <div class="top-buttons">
-    <a href="index.html">🏠 Retour à la page principale</a>
+    <a href="index.html"><i class="fa-solid fa-arrow-left"></i> Retour à la page principale</a>
   </div>
 
-  <h1>🛒 Mon Panier</h1>
-  <ul id="bucketList"></ul>
-  <div class="total" id="total"></div>
 
-  <form action="https://formspree.io/f/xzzakbqg" method="POST">
-    <input type="hidden" name="message" id="message">
-    <button type="submit" class="submit-btn">Envoyer ma commande</button>
-  </form>
+
+  <section class="section_part">
+    <h1 id="mon_panier"><i class="fa-solid fa-cart-shopping"></i> Mon Panier</h1>
+    <ul id="bucketList"></ul>
+    <div class="total" id="total"></div>
+
+    <form action="https://formspree.io/f/xzzakbqg" method="POST">
+      <input type="hidden" name="message" id="message">
+      <button type="submit" class="submit-btn">Envoyer ma commande</button>
+    </form>
+  </section>
+  
 
   <script>
     function getBucket() {
@@ -198,10 +217,14 @@
       let orderDetails = "";
 
       if (bucket.length === 0) {
-        list.innerHTML = "<p>Votre panier est vide.</p>";
-        totalDiv.textContent = "";
-        hiddenMessage.value = "Panier vide";
-        return;
+        list.innerHTML = `
+      <div class="empty-cart-wrapper">
+        <p>Votre panier est vide 🛒</p>
+      </div>
+      `;
+      totalDiv.textContent = "";
+      hiddenMessage.value = "Panier vide";
+      return;
       }
 
       bucket.forEach(item => {
