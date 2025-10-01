@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="contact.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+</head>
+<body>
+    <style>
+        body{
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            padding-top: 50px;
+            background-color:  #ecf0f1;
+        }
+
+        .section1{
+            border-radius: 20px;
+            height: 319px;
+            padding: 30px;
+            width: 300px;
+            background-color: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1)
+        }
+
+        form {
+            border-radius: 20px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            width: 400px;
+            height: 340px;
+            background-color: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1)
+
+        }
+        .section1 p {
+            font-size: 18px;
+        }
+
+         .section2 form input{
+            margin-bottom: 20px;
+            padding: 5px;
+            border-radius: 5px;
+            outline: none;
+            border: 1px solid black;
+            
+        }
+
+        .section2 form button{
+            display: inline;
+            margin-top: 17px;
+            padding: 7px;
+            border-radius: 5px;
+            border: 1px solid transparent;
+            color: white;
+            background-color:#02866cd5;
+            font-size: 15px;
+
+        }
+
+        .section2 form textarea{
+            padding: 10px;
+            border-radius: 5px;
+
+        }
+
+        .container{
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            align-items: center;
+            margin-top: 100px;
+
+        }
+
+        .section1 h1{
+            text-align: center;
+            color: #02866b;
+            margin-bottom: 30px;
+
+        }
+
+        .section2 h1{
+            text-align: center;
+            color: #02866b;
+        }
+
+        .section1 span{
+            font-weight: bold;
+
+        }
+
+        #contact{
+            text-align: center;
+            color: #02866b;
+            font-size: 40px;
+            font-weight: bold;
+        }
+
+        .section2 form button:hover{
+            background-color:#025444da;
+            transform: scale(1.05);
+            color: white;
+            border: 1px solid transparent;
+        }
+
+        .retour{
+            display: inline;
+            position: absolute;
+            left: 50px;
+            top: 20px;
+            max-width: 600px;
+            margin: 0 auto 15px auto;
+            gap: 10px;
+            border: 1px solid transparent;
+            padding: 8px;
+            border-radius: 10px;
+            background-color: #02866cf5;
+    
+        }
+        .retour a {
+            text-decoration: none;
+            top: 0;
+            color: white;
+        }
+
+        .retour:hover{
+            background-color: #025444da;
+            color: white;
+            transform: scale(1.06);
+        }
+
+    </style>
+    <h1 id="contact"><i class="fa-solid fa-phone"></i> CONTACTS</h1>
+    <div class="retour">
+        <a href="index.html"><i class="fa-solid fa-arrow-left"></i> Retour à la page principale</a>
+    </div>
+    <div class="container">
+        <section class="section1">
+            <h1><i class="fa-regular fa-house"></i> Senepharma</h1>
+            <p>Vous pouvez nous conctacter au : <span>(221)338024754 - 776588555</span></p>
+            <p>Vous trouverez ci-dessous notre adresse complete</p>
+            <P><span>R.C: SN.DKR.2024.M.3085 N.I.N.E.A: 010732627</span></P>
+        </section>
+        <section class="section2">
+        <form action="https://formspree.io/f/xzzakbqg" method="POST">
+            <h1><i class="fa-regular fa-envelope"></i> Ecrivez-nous</h1>
+            
+            <input type="text" name="nom" placeholder="Votre nom" required>
+            <input type="text" name="prenom" placeholder="Votre prenom" required>
+            <input type="email" name="email" placeholder="Votre email" required>
+            <textarea name="message" placeholder="Votre message...." required></textarea>
+            
+            <button type="submit">Envoyer</button>
+        </form>
+        </section>
+    </div>
+</body>
+</html>
