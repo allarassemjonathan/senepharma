@@ -16,7 +16,7 @@
     }
 
     h1 {
-      color: #0066cc;
+      color: #009879;
       text-align: center;
       margin-bottom: 15px;
     }
@@ -34,7 +34,7 @@
     .top-buttons a {
       padding: 8px 12px;
       text-decoration: none;
-      background: #0066cc;
+      background: #009879;
       color: white;
       border-radius: 6px;
       font-size: 14px;
@@ -171,6 +171,73 @@
         padding: 8px 12px;
       }
     }
+      form {
+    max-width: 600px;
+    margin: 30px auto;
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  form h2 {
+    text-align: center;
+    color: #009879;
+    margin-bottom: 10px;
+  }
+
+  form input[type="text"],
+  form input[type="number"] {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 15px;
+    transition: border 0.3s;
+  }
+
+  form input[type="text"]:focus,
+  form input[type="number"]:focus {
+    outline: none;
+    border-color: #009879;
+    box-shadow: 0 0 4px rgba(0,102,204,0.4);
+  }
+
+  button.submit-btn {
+    width: 100%;
+    max-width: none;
+    padding: 12px 15px;
+    font-size: 16px;
+    border-radius: 8px;
+    border: none;
+    background: #009879;
+    color: white;
+    cursor: pointer;
+    margin-top: 10px;
+    font-weight: bold;
+    transition: background 0.3s;
+  }
+
+  button.submit-btn:hover {
+    background: #00775f;
+  }
+
+  @media (max-width: 480px) {
+    form {
+      padding: 15px;
+    }
+    form input {
+      font-size: 14px;
+      padding: 10px;
+    }
+    button.submit-btn {
+      font-size: 14px;
+      padding: 10px;
+    }
+  }
   </style>
 </head>
 <body>
@@ -186,12 +253,13 @@
     <ul id="bucketList"></ul>
     <div class="total" id="total"></div>
 
-  <form action="https://formspree.io/f/xzzakbqg" method="POST">
-    <input type="text" name="name" placeholder="Nom">
-    <input type="number" name="number" placeholder="Numero">
-    <input type="hidden" name="message" id="message">
-    <button type="submit" class="submit-btn">Envoyer ma commande</button>
-  </form>
+<form action="https://formspree.io/f/xzzakbqg" method="POST">
+  <h2><i class="fa-solid fa-envelope"></i> Informations de commande</h2>
+  <input type="text" name="name" placeholder="Nom complet" required>
+  <input type="number" name="number" placeholder="Numéro de téléphone" required>
+  <input type="hidden" name="message" id="message">
+  <button type="submit" class="submit-btn">Envoyer ma commande</button>
+</form>
 
   <script>
     function getBucket() {
